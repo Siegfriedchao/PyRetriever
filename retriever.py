@@ -7,6 +7,7 @@ import pandas as pd
 import time
 from pathlib import Path
 
+# Please type in your root
 root_path = r"D:\Pictures\Peter"
 init_counter = root_path.count(os.sep)
 
@@ -14,11 +15,11 @@ for root, dirs, files in os.walk(root_path, topdown=False):
     # A treewalk using os.walk method from root
     for name in files:
         raw = os.path.join(root, name)
-        base = os.path.basename(raw)
         
         # Retrieve basic information
-        file_name, file_extension = os.path.splitext(base)
-        f_d = pd.DataFrame([file_name])
+        base = os.path.basename(raw)
+        f_d = pd.DataFrame([base])
+        _, file_extension = os.path.splitext(base)
         f_e = pd.DataFrame([file_extension])
 
         # Retrieve creation date and time
@@ -42,5 +43,6 @@ for root, dirs, files in os.walk(root_path, topdown=False):
 
         # Generate CSV output
         # in the form of Name, Modified Date, Document Type, Path
+        # Note Delete the generated csv before rerunning this programme
         file_check = pd.concat([f_d, f_atime, f_e, f_p, f_l], axis=1)
         file_check.to_csv('file_check.csv', mode='a', header=None, index=None, encoding='utf-8-sig')
