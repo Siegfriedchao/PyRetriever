@@ -16,13 +16,15 @@ for root, dirs, files in os.walk(root_path, topdown=False):
     # A treewalk using os.walk method from root
     for name in files:
         raw = os.path.join(root, name)
+        path_list = root.split(os.sep)
+        f_plist = pd.DataFrame([path_list])
         
         # Retrieve basic information
         base = os.path.basename(raw)
         f_d = pd.DataFrame([base])
         _, file_extension = os.path.splitext(base)
         f_e = pd.DataFrame([file_extension])
-
+        
         # Retrieve creation date and time
         # Note this returns the local time, instead of UTC
         # Currently not in use
@@ -55,5 +57,5 @@ for root, dirs, files in os.walk(root_path, topdown=False):
         # Generate CSV output
         # in the form of Name, Modified Date, Document Type, Path
         # Note Delete the generated csv before rerunning this programme
-        file_check = pd.concat([f_d, f_atime, f_e, f_p, f_l, f_o], axis=1)
+        file_check = pd.concat([f_d, f_atime, f_e, f_p, f_l, f_o, f_plist], axis=1)
         file_check.to_csv('file_check.csv', mode='a', header=None, index=None, encoding='utf-8-sig')
