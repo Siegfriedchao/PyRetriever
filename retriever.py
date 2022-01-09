@@ -5,6 +5,7 @@
 import os
 import pandas as pd
 import time
+import win32security
 from pathlib import Path
 
 # Please type in your root
@@ -41,8 +42,18 @@ for root, dirs, files in os.walk(root_path, topdown=False):
         file_depth = raw.count(os.sep) - init_counter
         f_l = pd.DataFrame([file_depth])
 
+        # Retrieve ownership information
+        # ref:https://stackoverflow.com/questions/66248783/
+        try:
+            sd = win32security.GetFileSecurity(raw, win32security.OWNER_SECURITY_INFORMATION)
+            owner_sid = sd.GetSecurityDescriptorOwner ()
+            file_owner, _, _ = win32security.LookupAccountSid (None, owner_sid)
+        except:
+            file_owner = "Error."
+        f_o = pd.DataFrame([file_owner])
+
         # Generate CSV output
         # in the form of Name, Modified Date, Document Type, Path
         # Note Delete the generated csv before rerunning this programme
-        file_check = pd.concat([f_d, f_atime, f_e, f_p, f_l], axis=1)
+        file_check = pd.concat([f_d, f_atime, f_e, f_p, f_l, f_o], axis=1)
         file_check.to_csv('file_check.csv', mode='a', header=None, index=None, encoding='utf-8-sig')
